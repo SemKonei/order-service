@@ -11,7 +11,9 @@ import java.math.BigDecimal;
 
 @Entity
 public class OrderMerch extends BaseEntity{
+
     private Merch merch;
+
     private Order order;
 
     private Float price;

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 public class User extends NamedEntity {
+
     private String email;
 
     private String password;

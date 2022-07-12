@@ -10,7 +10,8 @@ import javax.persistence.*;
 @Setter
 @MappedSuperclass
 @Access(AccessType.FIELD)
-public class BaseEntity {
+public class BaseEntity implements HasId {
+
     public static final int START_SEQ = 100000;
 
     @Id
@@ -23,6 +24,16 @@ public class BaseEntity {
 
     public BaseEntity(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    @Override
+    public Integer getId() {
+        return id;
     }
 
     @Override

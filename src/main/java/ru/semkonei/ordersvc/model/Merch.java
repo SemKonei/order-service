@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 
 @Entity
 public class Merch extends NamedEntity {
+
     private BigDecimal currentPrice;
 
     public Merch() {
