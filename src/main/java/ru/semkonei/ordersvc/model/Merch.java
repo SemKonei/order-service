@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Entity
 public class Merch extends NamedEntity {
 
-    private BigDecimal currentPrice;
+    private Float currentPrice;
 
     public Merch() {
     }
@@ -24,16 +24,16 @@ public class Merch extends NamedEntity {
         super(id, name);
     }
 
-    public Merch(Integer id, String name, BigDecimal currentPrice) {
+    public Merch(Integer id, String name, Float currentPrice) {
         super(id, name);
         this.currentPrice = currentPrice;
     }
 
-    public BigDecimal getCurrentPrice() {
+    public Float getCurrentPrice() {
         return currentPrice;
     }
 
-    public void setCurrentPrice(BigDecimal currentPrice) {
+    public void setCurrentPrice(Float currentPrice) {
         this.currentPrice = currentPrice;
     }
 
