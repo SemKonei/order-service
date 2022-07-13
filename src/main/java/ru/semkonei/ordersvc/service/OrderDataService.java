@@ -14,15 +14,15 @@ import java.util.Map;
 @Service
 public class OrderDataService {
 
-    OrderService orderService;
-    OrderMerchService orderMerchService;
+    private OrderService orderService;
+    private OrderMerchService orderMerchService;
 
     @Autowired
     public OrderDataService(OrderService orderService, OrderMerchService orderMerchService) {
         this.orderService = orderService;
         this.orderMerchService = orderMerchService;
     }
-
+/*
     @Transactional
     public Order create(List<OrderMerch> orderMerchList, Integer userId) {
         Order createdOrder = orderService.create(new Order(null, LocalDateTime.now(), null), userId);
@@ -31,7 +31,7 @@ public class OrderDataService {
             orderMerchService.create(orderMerch);
         });
         return createdOrder;
-    }
+    }*/
 
     @Transactional
     public Order create(Map<Merch, Integer> merchList, Integer userId) {
