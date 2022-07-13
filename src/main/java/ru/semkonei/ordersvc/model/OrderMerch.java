@@ -10,14 +10,27 @@ import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "order_merch")
 public class OrderMerch extends BaseEntity{
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "merch_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Merch merch;
 
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Order order;
 
+    @PositiveOrZero
+    @Column(name = "price", nullable = false)
     private Float price;
 
+    @Positive
+    @Column(name = "count", nullable = false)
     private int count;
 
     public OrderMerch() {

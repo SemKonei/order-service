@@ -13,6 +13,9 @@ import javax.validation.constraints.Size;
 @MappedSuperclass
 public class NamedEntity extends BaseEntity {
 
+    @Column(name = "name", nullable = false)
+    @NotBlank
+    @Size(min = 2, max = 128)
     protected String name;
 
     public NamedEntity() {

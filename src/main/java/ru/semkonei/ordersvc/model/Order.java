@@ -8,10 +8,17 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "orders")
 public class Order extends BaseEntity {
 
+    @Column(name = "date_time", nullable = false)
+    @NotNull
     private LocalDateTime orderDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
     private User user;
 
     public Order() {

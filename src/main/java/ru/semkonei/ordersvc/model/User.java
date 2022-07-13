@@ -12,15 +12,31 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Table(name = "users")
 public class User extends NamedEntity {
 
+    @NotBlank
+    @Email
+    @Size(max = 128)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @NotBlank
+    @Size(min = 5, max = 128)
+    @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name = "enabled", nullable = false)
     private boolean enabled = false;
 
+    @NotNull
+    @Column(name = "registered", nullable = false, updatable = false)
     private Date registered = new Date();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @NotNull
+    private List<Order> orders;
 
     public User() {
     }

@@ -9,8 +9,12 @@ import javax.validation.constraints.PositiveOrZero;
 import java.math.BigDecimal;
 
 @Entity
+@Table(name = "Merch")
 public class Merch extends NamedEntity {
 
+    @Column(name = "curr_price", nullable = false)
+    @PositiveOrZero
+    @NotNull
     private Float currentPrice;
 
     public Merch() {
