@@ -7,6 +7,7 @@ import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.repository.OrderRepository;
 
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class DataJpaOrderRepository implements OrderRepository {
@@ -34,7 +35,7 @@ public class DataJpaOrderRepository implements OrderRepository {
     @Override
     public Order get(Integer id, Integer userId) {
         return orderRepository.findById(id)
-                .filter(order -> order.getUser().getId() == userId)
+                .filter(order -> Objects.equals(order.getUser().getId(), userId))
                 .orElse(null);
     }
 
