@@ -1,6 +1,5 @@
 package ru.semkonei.ordersvc.repository;
 
-import ru.semkonei.ordersvc.model.OrderMerch;
 import ru.semkonei.ordersvc.model.User;
 
 import java.util.List;
