@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.Merch;
 import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.model.OrderMerch;
+import ru.semkonei.ordersvc.util.SecurityUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -15,30 +16,27 @@ import java.util.Map;
 public class OrderDataService {
 
     private OrderService orderService;
+    private MerchService merchService;
     private OrderMerchService orderMerchService;
 
     @Autowired
-    public OrderDataService(OrderService orderService, OrderMerchService orderMerchService) {
+    public OrderDataService(OrderService orderService, MerchService merchService, OrderMerchService orderMerchService) {
         this.orderService = orderService;
+        this.merchService = merchService;
         this.orderMerchService = orderMerchService;
     }
-/*
-    @Transactional
-    public Order create(List<OrderMerch> orderMerchList, Integer userId) {
-        Order createdOrder = orderService.create(new Order(null, LocalDateTime.now(), null), userId);
-        orderMerchList.forEach(orderMerch -> {
-            orderMerch.setOrder(createdOrder);
-            orderMerchService.create(orderMerch);
-        });
-        return createdOrder;
-    }*/
 
     @Transactional
-    public Order create(Map<Merch, Integer> merchList, Integer userId) {
-        Order createdOrder = orderService.create(new Order(null, LocalDateTime.now(), null), userId);
-        merchList.forEach((merch, count) ->
-                orderMerchService.create(new OrderMerch(null, createdOrder, merch, merch.getCurrentPrice(), count)));
-        return createdOrder;
+    public Order create(Integer merchId, Integer count, Integer userId) {
+        Merch addedMerch = merchService.get(merchId);
+        Order order = orderService.getInProcess(SecurityUtil.authUserId());
+        if (order == null) {
+            order = orderService.create(new Order(null, LocalDateTime.now(), null), SecurityUtil.authUserId());
+        }
+        orderMerchService.create(new OrderMerch(null, null, addedMerch, addedMerch.getCurrentPrice(), count),
+                order.getId(),
+                userId);
+        return order;
     }
 
 }

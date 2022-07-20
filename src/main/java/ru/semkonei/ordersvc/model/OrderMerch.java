@@ -1,5 +1,7 @@
 package ru.semkonei.ordersvc.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -22,6 +24,7 @@ public class OrderMerch extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonBackReference
     private Order order;
 
     @PositiveOrZero
@@ -82,6 +85,8 @@ public class OrderMerch extends BaseEntity{
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(super.toString());
+        /*sb.append(" orderId=").append(order.getId());
+        sb.append(" merchId=").append(merch.getId());*/
         sb.append(" count=").append(count);
         sb.append(" price=").append(price).append("}");
         return sb.toString();

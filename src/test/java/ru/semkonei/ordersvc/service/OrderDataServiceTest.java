@@ -24,7 +24,7 @@ public class OrderDataServiceTest  extends AbstractServiceTest {
     @Test
     public void create() {
         Order newOrder = getNew();
-        Order created = orderDataService.create(Map.of(merch1, 1),USER_ID);
+        Order created = orderDataService.create(MERCH1_ID, 1,USER_ID);
         newOrder.setId(created.getId());
         ORDER_MATCHER.assertMatch(created, newOrder);
         ORDER_MATCHER.assertMatch(orderService.get(ORDERMERCH1_ID+2, USER_ID), newOrder);
@@ -32,6 +32,6 @@ public class OrderDataServiceTest  extends AbstractServiceTest {
 
     @Test
     public void createWithNegativeCount() {
-        assertThrows(DataIntegrityViolationException.class, () -> orderDataService.create(Map.of(merch1, -1),USER_ID));
+        assertThrows(DataIntegrityViolationException.class, () -> orderDataService.create(MERCH1_ID, -1,USER_ID));
     }
 }

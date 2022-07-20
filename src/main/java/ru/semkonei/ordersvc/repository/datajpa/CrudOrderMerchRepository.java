@@ -14,12 +14,10 @@ public interface CrudOrderMerchRepository extends JpaRepository<OrderMerch, Inte
 
     @Transactional
     @Modifying
-    @Query("DELETE FROM OrderMerch o WHERE o.id=:id")
-    int delete(@Param("id") int id);
+    @Query("DELETE FROM OrderMerch o WHERE o.id=:id AND o.order.user.id=:userId")
+    int delete(@Param("id") int id, @Param("userId") int userId);
 
-    @Query("SELECT o FROM OrderMerch o WHERE o.order.id=:orderId")
-    List<OrderMerch> getAll(@Param("orderId") int orderId);
+    @Query("SELECT o FROM OrderMerch o WHERE o.order.id=:orderId AND o.order.user.id=:userId")
+    List<OrderMerch> getAll(@Param("orderId") int orderId, @Param("userId") int userId);
 
-    @Query("SELECT o FROM OrderMerch o WHERE o.id=:id")
-    OrderMerch get(@Param("id") int id);
 }
