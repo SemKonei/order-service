@@ -40,6 +40,16 @@ public class DataJpaOrderRepository implements OrderRepository {
     }
 
     @Override
+    public Order getInProcess(Integer userId) {
+        return orderRepository.getInProcess(userId);
+    }
+
+    @Override
+    public Order getWithOM(Integer id,Integer userId) {
+        return orderRepository.getWithOM(id, userId);
+    }
+
+    @Override
     public List<Order> getAll(Integer userId) {
         return orderRepository.getAll(userId);
     }
