@@ -1,5 +1,6 @@
 package ru.semkonei.ordersvc.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -33,10 +34,11 @@ public class User extends NamedEntity {
     @Column(name = "registered", nullable = false, updatable = false)
     private Date registered = new Date();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+/*    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    private List<Order> orders;
+    @JsonManagedReference
+    private List<Order> orders;*/
 
     public User() {
     }
