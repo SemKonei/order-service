@@ -13,14 +13,14 @@ CREATE TABLE users
     email      VARCHAR                 NOT NULL,
     password   VARCHAR                 NOT NULL,
     registered TIMESTAMP DEFAULT now() NOT NULL,
-    enabled    BOOL      DEFAULT TRUE  NOT NULL
+    enabled    BOOLEAN      DEFAULT TRUE  NOT NULL
 );
 
 CREATE TABLE merch
 (
     id         BIGINT DEFAULT NEXT VALUE FOR global_seq PRIMARY KEY,
-    name       TEXT  NOT NULL,
-    curr_price FLOAT NOT NULL CHECK (curr_price > 0)
+    name       VARCHAR NOT NULL,
+    curr_price FLOAT   NOT NULL CHECK (curr_price > 0)
 );
 
 CREATE TABLE orders
@@ -28,6 +28,7 @@ CREATE TABLE orders
     id        BIGINT    DEFAULT NEXT VALUE FOR global_seq PRIMARY KEY,
     user_id   INTEGER                 NOT NULL,
     date_time TIMESTAMP DEFAULT now() NOT NULL,
+    status    BOOLEAN   DEFAULT FALSE NOT NULL,
     /*price    FLOAT   NOT NULL,*/
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
