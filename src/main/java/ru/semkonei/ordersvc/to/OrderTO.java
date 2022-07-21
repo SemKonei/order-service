@@ -1,32 +1,30 @@
 package ru.semkonei.ordersvc.to;
 
 import ru.semkonei.ordersvc.model.Order;
-import ru.semkonei.ordersvc.model.OrderMerch;
-import ru.semkonei.ordersvc.model.User;
+import ru.semkonei.ordersvc.model.OrderStatus;
 
 import java.beans.ConstructorProperties;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class OrderTO extends BaseTO {
 
     private LocalDateTime orderDate;
 
-    private boolean completed;
+    private OrderStatus status;
 
     public OrderTO() {
     }
 
     @ConstructorProperties({"id", "orderDate", "isCompleted"})
-    public OrderTO(Integer id, LocalDateTime orderDate, boolean completed) {
+    public OrderTO(Integer id, LocalDateTime orderDate, OrderStatus status) {
         super(id);
         this.orderDate = orderDate;
-        this.completed = completed;
+        this.status = status;
     }
     public OrderTO(Order order) {
         super(order.getId());
         this.orderDate = order.getOrderDate();
-        this.completed = order.isCompleted();
+        this.status = order.getStatus();
     }
 
     public LocalDateTime getOrderDate() {
@@ -37,11 +35,11 @@ public class OrderTO extends BaseTO {
         this.orderDate = orderDate;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean completed) {
-        this.completed = completed;
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

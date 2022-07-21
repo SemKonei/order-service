@@ -18,9 +18,10 @@ public class Order extends BaseEntity {
     @NotNull
     private LocalDateTime orderDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    @NotNull
-    private boolean completed;
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -38,20 +39,20 @@ public class Order extends BaseEntity {
     }
 
     public Order(Order order) {
-        this(order.id, order.orderDate, order.completed, order.user);
+        this(order.id, order.orderDate, order.status, order.user);
     }
 
     public Order(Integer id, LocalDateTime orderDate, User user) {
         super(id);
         this.orderDate = orderDate;
-        this.completed = false;
+        this.status = OrderStatus.DRAFT;
         this.user = user;
     }
 
-    public Order(Integer id, LocalDateTime orderDate, boolean completed, User user) {
+    public Order(Integer id, LocalDateTime orderDate, OrderStatus status, User user) {
         super(id);
         this.orderDate = orderDate;
-        this.completed = completed;
+        this.status = status;
         this.user = user;
     }
 
@@ -67,12 +68,12 @@ public class Order extends BaseEntity {
         this.user = user;
     }
 
-    public boolean isCompleted() {
-        return completed;
+    public OrderStatus getStatus() {
+        return status;
     }
 
-    public void setCompleted(boolean status) {
-        this.completed = status;
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 
     @Override

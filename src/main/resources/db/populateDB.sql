@@ -14,9 +14,9 @@ VALUES ('Merch 1', 100),
        ('Merch 2', 500);
 
 INSERT INTO orders (user_id, date_time, status)
-VALUES (100000, '2022-03-1 1:11:00', false),
-       (100000, '2022-04-2 3:33:00', true),
-       (100000, '2022-05-3 4:44:00', true);
+VALUES (100000, '2022-03-1 1:11:00', 'DRAFT'),
+       (100000, '2022-04-2 3:33:00', 'COMPLETED'),
+       (100000, '2022-05-3 4:44:00', 'DELETED');
 
 INSERT INTO order_merch (order_id, merch_id, price, count)
 VALUES (100005, 100003, 100, 2),

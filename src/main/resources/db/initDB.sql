@@ -28,7 +28,7 @@ CREATE TABLE orders
     id        BIGINT    DEFAULT NEXT VALUE FOR global_seq PRIMARY KEY,
     user_id   INTEGER                 NOT NULL,
     date_time TIMESTAMP DEFAULT now() NOT NULL,
-    status    BOOLEAN   DEFAULT FALSE NOT NULL,
+    status    VARCHAR   DEFAULT 'DRAFT' NOT NULL,
     /*price    FLOAT   NOT NULL,*/
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
