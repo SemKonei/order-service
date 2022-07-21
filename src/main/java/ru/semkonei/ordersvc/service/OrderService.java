@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import ru.semkonei.ordersvc.model.Order;
+import ru.semkonei.ordersvc.model.OrderStatus;
 import ru.semkonei.ordersvc.repository.OrderRepository;
 import ru.semkonei.ordersvc.util.SecurityUtil;
 
@@ -32,9 +33,11 @@ public class OrderService {
         return checkNotFoundWithId(repository.get(id, userId), id);
     }
 
-
-    public Order getInProcess(Integer userId) {
-        return repository.getInProcess(userId);
+    public Order getNotWithStatus(Integer id, OrderStatus status, Integer userId) {
+        return checkNotFoundWithId(repository.getNotWithStatus(id, status, userId), id);
+    }
+    public Order getWithStatus(Integer id, OrderStatus status, Integer userId) {
+        return checkNotFoundWithId(repository.getWithStatus(id, status, userId), id);
     }
 
     public Order getWithOM(Integer id,Integer userId) {

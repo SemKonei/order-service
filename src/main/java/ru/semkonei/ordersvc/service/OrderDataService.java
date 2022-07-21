@@ -6,18 +6,17 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.Merch;
 import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.model.OrderMerch;
+import ru.semkonei.ordersvc.model.OrderStatus;
 import ru.semkonei.ordersvc.util.SecurityUtil;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class OrderDataService {
 
-    private OrderService orderService;
-    private MerchService merchService;
-    private OrderMerchService orderMerchService;
+    private final OrderService orderService;
+    private final MerchService merchService;
+    private final OrderMerchService orderMerchService;
 
     @Autowired
     public OrderDataService(OrderService orderService, MerchService merchService, OrderMerchService orderMerchService) {
@@ -27,12 +26,19 @@ public class OrderDataService {
     }
 
     @Transactional
-    public Order create(Integer merchId, Integer count, Integer userId) {
+    public Order create(Integer merchId, Integer count, Integer orderId, Integer userId) {
         Merch addedMerch = merchService.get(merchId);
-        Order order = orderService.getInProcess(SecurityUtil.authUserId());
-        if (order == null) {
-            order = orderService.create(new Order(null, LocalDateTime.now(), null), SecurityUtil.authUserId());
+        Order order;
+
+        if (orderId != null) {
+            order = orderService.getWithStatus(orderId, OrderStatus.DRAFT, userId);
+        } else {
+            order = orderService.create(
+                    new Order(null, LocalDateTime.now(), OrderStatus.DRAFT, null),
+                    SecurityUtil.authUserId()
+            );
         }
+
         orderMerchService.create(new OrderMerch(null, null, addedMerch, addedMerch.getCurrentPrice(), count),
                 order.getId(),
                 userId);

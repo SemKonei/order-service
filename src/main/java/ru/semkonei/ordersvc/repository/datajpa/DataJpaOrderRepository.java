@@ -3,6 +3,7 @@ package ru.semkonei.ordersvc.repository.datajpa;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.Order;
+import ru.semkonei.ordersvc.model.OrderStatus;
 import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.repository.OrderRepository;
 
@@ -40,8 +41,12 @@ public class DataJpaOrderRepository implements OrderRepository {
     }
 
     @Override
-    public Order getInProcess(Integer userId) {
-        return orderRepository.getInProcess(userId);
+    public Order getWithStatus(Integer id, OrderStatus status, Integer userId) {
+        return orderRepository.getWithStatus(id, status, userId);
+    }
+    @Override
+    public Order getNotWithStatus(Integer id, OrderStatus status, Integer userId) {
+        return orderRepository.getNotWithStatus(id, status, userId);
     }
 
     @Override

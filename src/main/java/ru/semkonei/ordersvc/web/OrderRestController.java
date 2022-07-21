@@ -8,10 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import ru.semkonei.ordersvc.model.Merch;
-import ru.semkonei.ordersvc.model.Order;
-import ru.semkonei.ordersvc.model.OrderMerch;
-import ru.semkonei.ordersvc.model.User;
+import ru.semkonei.ordersvc.model.*;
 import ru.semkonei.ordersvc.service.MerchService;
 import ru.semkonei.ordersvc.service.OrderDataService;
 import ru.semkonei.ordersvc.service.OrderMerchService;
@@ -24,7 +21,6 @@ import ru.semkonei.ordersvc.util.toUtils.OrderUtil;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 import static ru.semkonei.ordersvc.util.ValidationUtil.assureIdConsistent;
 
@@ -50,15 +46,32 @@ public class OrderRestController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Order> save(@RequestBody OrderMerchTO orderMerchTO) {
-        log.info("create new order");
-        Order created = orderDataService.create(orderMerchTO.getMerchId(), orderMerchTO.getCount(), SecurityUtil.authUserId());
-        log.info("created {}", created);
+        log.info("add {} to new order", orderMerchTO);
+        return getOrderResponseEntity(
+                orderDataService.create(
+                        orderMerchTO.getMerchId(),
+                        orderMerchTO.getCount(),
+                        null,
+                        SecurityUtil.authUserId()));
+    }
 
+    @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Order> save(@RequestBody OrderMerchTO orderMerchTO, @PathVariable Integer id) {
+        log.info("add {} to order {}", orderMerchTO, id);
+        return getOrderResponseEntity(
+                orderDataService.create(
+                        orderMerchTO.getMerchId(),
+                        orderMerchTO.getCount(),
+                        id,
+                        SecurityUtil.authUserId()));
+    }
+
+    private ResponseEntity<Order> getOrderResponseEntity(Order order) {
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
-                .buildAndExpand(created.getId()).toUri();
+                .buildAndExpand(order.getId()).toUri();
 
-        return ResponseEntity.created(uriOfNewResource).body(created);
+        return ResponseEntity.created(uriOfNewResource).body(order);
     }
 
     @GetMapping("/{id}")
@@ -76,17 +89,18 @@ public class OrderRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void updateStatus(@RequestBody OrderTO orderTO, @PathVariable Integer id) {
-        log.info("update {} ", orderTO);
-        assureIdConsistent(orderTO, id);
-        orderService.update(OrderUtil.getFromTo(orderTO), SecurityUtil.authUserId());
+    public void updateStatus(@RequestParam OrderStatus status, @PathVariable Integer id) {
+        log.info("update status for order {} ", id);
+        Order order = orderService.get(id, SecurityUtil.authUserId());
+        order.setStatus(status);
+        orderService.update(order, SecurityUtil.authUserId());
     }
 
-    @DeleteMapping("/{orderId}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Integer orderId) {
-        log.info("delete order {}", orderId);
-        orderService.delete(orderId, SecurityUtil.authUserId());
+    public void delete(@PathVariable Integer id) {
+        log.info("delete order {}", id);
+        orderService.delete(id, SecurityUtil.authUserId());
     }
 
 

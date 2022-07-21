@@ -1,7 +1,7 @@
 package ru.semkonei.ordersvc.repository;
 
-import org.springframework.data.repository.query.Param;
 import ru.semkonei.ordersvc.model.Order;
+import ru.semkonei.ordersvc.model.OrderStatus;
 
 import java.util.List;
 
@@ -11,7 +11,9 @@ public interface OrderRepository {
 
     Order get(Integer id, Integer userId);
 
-    Order getInProcess(Integer userId);
+    Order getNotWithStatus(Integer id, OrderStatus status, Integer userId);
+
+    Order getWithStatus(Integer id, OrderStatus status, Integer userId);
 
     Order getWithOM(Integer orderId, Integer userId);
 

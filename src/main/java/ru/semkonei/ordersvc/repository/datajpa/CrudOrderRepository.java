@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.Order;
+import ru.semkonei.ordersvc.model.OrderStatus;
 
 import java.util.List;
 
@@ -19,8 +20,12 @@ public interface CrudOrderRepository extends JpaRepository<Order, Integer> {
     int delete(@Param("id") int id, @Param("userId") int userId);
 
     @Transactional
-    @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.completed=FALSE")
-    Order getInProcess(@Param("userId") int userId);
+    @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.id=:id AND o.status<>:status")
+    Order getNotWithStatus(@Param("id") int id, @Param("status") OrderStatus status, @Param("userId") int userId);
+
+    @Transactional
+    @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.id=:id AND o.status=:status")
+    Order getWithStatus(@Param("id") int id, @Param("status") OrderStatus status, @Param("userId") int userId);
 
     @Transactional
     @EntityGraph(attributePaths = {"merchList.merch"}, type = EntityGraph.EntityGraphType.LOAD)
