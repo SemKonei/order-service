@@ -26,7 +26,7 @@ public class OrderDataService {
     }
 
     @Transactional
-    public Order create(Integer merchId, Integer count, Integer orderId, Integer userId) {
+    public OrderMerch create(Integer merchId, Integer count, Integer orderId, Integer userId) {
         Merch addedMerch = merchService.get(merchId);
         Order order;
 
@@ -39,10 +39,11 @@ public class OrderDataService {
             );
         }
 
-        orderMerchService.create(new OrderMerch(null, null, addedMerch, addedMerch.getCurrentPrice(), count),
-                order.getId(),
+        OrderMerch orderMerch = new OrderMerch(null, null, null, addedMerch.getCurrentPrice(), count);
+        return orderMerchService.create(
+                orderMerch,
+                addedMerch,
+                order,
                 userId);
-        return order;
     }
-
 }

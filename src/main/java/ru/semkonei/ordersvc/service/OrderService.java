@@ -36,19 +36,20 @@ public class OrderService {
     public Order getNotWithStatus(Integer id, OrderStatus status, Integer userId) {
         return checkNotFoundWithId(repository.getNotWithStatus(id, status, userId), id);
     }
+
     public Order getWithStatus(Integer id, OrderStatus status, Integer userId) {
         return checkNotFoundWithId(repository.getWithStatus(id, status, userId), id);
     }
 
-    public Order getWithOM(Integer id,Integer userId) {
-        return repository.getWithOM(id, userId);
+    public Order getWithOM(Integer id, Integer userId) {
+        return checkNotFoundWithId(repository.getWithOM(id, userId), id);
     }
 
     public List<Order> getAll(Integer userId) {
         return repository.getAll(userId);
     }
 
-    public  Order update(Order order, Integer userId) {
+    public Order update(Order order, Integer userId) {
         Assert.notNull(order, "Order must not be null!");
         return checkNotFoundWithId(repository.save(order, userId), order.id());
     }
