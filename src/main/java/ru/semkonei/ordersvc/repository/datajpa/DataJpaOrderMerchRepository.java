@@ -23,19 +23,17 @@ public class DataJpaOrderMerchRepository implements OrderMerchRepository {
     }
 
     @Override
-    public OrderMerch save(OrderMerch orderMerch, Integer orderId, Integer userId) {
-        if (!orderMerch.isNew() && get(orderMerch.id(), userId) == null) {
-            return null;
-        } else {
-            orderMerch.setOrder(orderRepository.getOne(orderId));
-        }
+    public OrderMerch save(OrderMerch orderMerch, Integer userId) {
         return orderMerchRepository.save(orderMerch);
     }
 
     @Override
-    public OrderMerch get(Integer id, Integer userId) {
+    public OrderMerch get(Integer id, Integer orderId, Integer userId) {
         return orderMerchRepository.findById(id)
-                .filter(orderMerch -> Objects.equals(orderMerch.getOrder().getUser().getId(), userId))
+                .filter(orderMerch ->
+                        Objects.equals(orderMerch.getOrder().getUser().getId(), userId) &&
+                        Objects.equals(orderMerch.getOrder().getId(), orderId)
+                )
                 .orElse(null);
     }
 
@@ -50,7 +48,7 @@ public class DataJpaOrderMerchRepository implements OrderMerchRepository {
     }
 
     @Override
-    public boolean delete(Integer id, Integer userId) {
-        return orderMerchRepository.delete(id, userId) != 0;
+    public boolean delete(Integer id, Integer orderId, Integer userId) {
+        return orderMerchRepository.delete(id, orderId, userId) != 0;
     }
 }
