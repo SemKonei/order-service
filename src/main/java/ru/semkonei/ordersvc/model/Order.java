@@ -2,6 +2,9 @@ package ru.semkonei.ordersvc.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -12,6 +15,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Order extends BaseEntity {
 
     @Column(name = "date_time", nullable = false)
@@ -23,7 +29,7 @@ public class Order extends BaseEntity {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private OrderStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
@@ -35,7 +41,8 @@ public class Order extends BaseEntity {
     @JsonManagedReference
     private List<OrderMerch> merchList;
 
-    public Order() {
+    public Order(Integer id) {
+        super(id);
     }
 
     public Order(Order order) {
@@ -55,31 +62,11 @@ public class Order extends BaseEntity {
         this.status = status;
         this.user = user;
     }
-
-    public LocalDateTime getOrderDate() {
-        return orderDate;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(super.toString());
-        sb.append(", orderDate=").append(orderDate).append("}");
+        sb.append(", orderDate=").append(orderDate);
+        sb.append(", status=").append(status).append("}");
         return sb.toString();
     }
 }

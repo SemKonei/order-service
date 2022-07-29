@@ -1,6 +1,7 @@
 package ru.semkonei.ordersvc.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @MappedSuperclass
 public class NamedEntity extends BaseEntity {
 
@@ -17,9 +19,6 @@ public class NamedEntity extends BaseEntity {
     @NotBlank
     @Size(min = 2, max = 128)
     protected String name;
-
-    public NamedEntity() {
-    }
 
     public NamedEntity(Integer id, String name) {
         super(id);

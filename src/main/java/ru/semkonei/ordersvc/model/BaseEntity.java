@@ -1,15 +1,17 @@
 package ru.semkonei.ordersvc.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 
-@Getter
-@Setter
 @MappedSuperclass
 @Access(AccessType.FIELD)
+@Getter
+@Setter
+@NoArgsConstructor
 public class BaseEntity implements HasId {
 
     public static final int START_SEQ = 100000;
@@ -19,21 +21,8 @@ public class BaseEntity implements HasId {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     protected Integer id;
 
-    public BaseEntity() {
-    }
-
     public BaseEntity(Integer id) {
         this.id = id;
-    }
-
-    @Override
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Override
-    public Integer getId() {
-        return id;
     }
 
     @Override

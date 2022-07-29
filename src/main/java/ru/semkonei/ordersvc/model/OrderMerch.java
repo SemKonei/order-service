@@ -2,6 +2,10 @@ package ru.semkonei.ordersvc.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -12,16 +16,20 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Entity
 @Table(name = "order_merch")
+@Getter
+@Setter
+@NoArgsConstructor
 public class OrderMerch extends BaseEntity{
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merch_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @JsonProperty("merchId")
     private Merch merch;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", nullable = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonBackReference
@@ -34,10 +42,6 @@ public class OrderMerch extends BaseEntity{
     @Positive
     @Column(name = "count", nullable = false)
     private int count;
-
-    public OrderMerch() {
-    }
-
     public OrderMerch(OrderMerch orderMerch) {
         this(orderMerch.id, orderMerch.order, orderMerch.merch, orderMerch.price, orderMerch.count);
     }
@@ -47,38 +51,6 @@ public class OrderMerch extends BaseEntity{
         this.order = order;
         this.merch = merch;
         this.price = price;
-        this.count = count;
-    }
-
-    public Merch getMerch() {
-        return merch;
-    }
-
-    public void setMerch(Merch merch) {
-        this.merch = merch;
-    }
-
-    public Order getOrder() {
-        return order;
-    }
-
-    public void setOrder(Order order) {
-        this.order = order;
-    }
-
-    public Float getPrice() {
-        return price;
-    }
-
-    public void setPrice(Float price) {
-        this.price = price;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
         this.count = count;
     }
 

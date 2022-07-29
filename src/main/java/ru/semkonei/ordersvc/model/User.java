@@ -1,6 +1,10 @@
 package ru.semkonei.ordersvc.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -9,11 +13,16 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
 public class User extends NamedEntity {
 
     @NotBlank
@@ -34,14 +43,11 @@ public class User extends NamedEntity {
     @Column(name = "registered", nullable = false, updatable = false)
     private Date registered = new Date();
 
-/*    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
     @NotNull
-    @JsonManagedReference
-    private List<Order> orders;*/
-
-    public User() {
-    }
+    @JsonIgnore
+    private List<Order> orders = new ArrayList<>();
 
     public User(User u) {
         this(u.id, u.name, u.email, u.password, u.enabled, u.registered);
@@ -51,8 +57,11 @@ public class User extends NamedEntity {
         super(id, name);
     }
 
+    public User(String name, String email, String password) {
+        this(null, name, email, password, false, new Date());
+    }
     public User(Integer id, String name, String email, String password) {
-        this(id, name, email, password, true, new Date());
+        this(id, name, email, password, false, new Date());
     }
 
     public User(Integer id, String name, String email, String password, boolean enabled, Date registered) {
@@ -63,32 +72,25 @@ public class User extends NamedEntity {
         this.registered = registered;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !getClass().equals(Hibernate.getClass(o))) {
+            return false;
+        }
+        User that = (User) o;
+        return id != null && id.equals(that.id)
+                && enabled == that.enabled
+                && Objects.equals(email, that.email)
+                && Objects.equals(password, that.password)
+                && Objects.equals(registered, that.registered);
     }
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public Date getRegistered() {
-        return registered;
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), email, registered);
     }
 
     @Override

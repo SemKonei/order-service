@@ -1,15 +1,20 @@
 package ru.semkonei.ordersvc.model;
 
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.PositiveOrZero;
-import java.math.BigDecimal;
 
 @Entity
 @Table(name = "Merch")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Merch extends NamedEntity {
 
     @Column(name = "curr_price", nullable = false)
@@ -17,11 +22,12 @@ public class Merch extends NamedEntity {
     @NotNull
     private Float currentPrice;
 
-    public Merch() {
-    }
-
     public Merch(Merch merch) {
         this(merch.id, merch.name, merch.currentPrice);
+    }
+
+    public Merch(Integer id) {
+        super(id, null);
     }
 
     public Merch(Integer id, String name) {
@@ -33,11 +39,8 @@ public class Merch extends NamedEntity {
         this.currentPrice = currentPrice;
     }
 
-    public Float getCurrentPrice() {
-        return currentPrice;
-    }
-
-    public void setCurrentPrice(Float currentPrice) {
+    public Merch(String name, Float currentPrice) {
+        super(null, name);
         this.currentPrice = currentPrice;
     }
 
