@@ -1,4 +1,4 @@
-package ru.semkonei.ordersvc.to;
+package ru.semkonei.ordersvc.web.to;
 
 import ru.semkonei.ordersvc.model.HasId;
 
@@ -21,5 +21,12 @@ public class BaseTO implements HasId {
     @Override
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer(getClass().getSimpleName());
+        sb.append(" {id=").append(id);
+        return sb.toString();
     }
 }
