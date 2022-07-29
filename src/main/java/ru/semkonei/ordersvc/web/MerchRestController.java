@@ -10,19 +10,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.semkonei.ordersvc.model.Merch;
 import ru.semkonei.ordersvc.service.MerchService;
-import ru.semkonei.ordersvc.to.MerchTO;
+import ru.semkonei.ordersvc.web.to.MerchRequestTO;
+import ru.semkonei.ordersvc.web.to.MerchResponseTO;
 import ru.semkonei.ordersvc.util.toUtils.MerchUtil;
 
 import java.net.URI;
 import java.util.List;
 
-import static ru.semkonei.ordersvc.util.ValidationUtil.assureIdConsistent;
-
 @RestController
 @RequestMapping(value = MerchRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MerchRestController {
 
-    static final String REST_URL = "rest/merch";
+    static final String REST_URL = "/rest/merch/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -34,7 +33,7 @@ public class MerchRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<MerchTO> create(@RequestBody MerchTO merchTO) {
+    public ResponseEntity<MerchResponseTO> create(@RequestBody MerchRequestTO merchTO) {
         log.info("create {}", merchTO);
         Merch created = service.create(MerchUtil.getFromTo(merchTO));
 
@@ -47,20 +46,20 @@ public class MerchRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody MerchTO merch, @PathVariable Integer id) {
-        log.info("update {} ", merch);
-        assureIdConsistent(merch, id);
-        service.update(MerchUtil.getFromTo(merch));
+    public void update(@RequestBody MerchRequestTO merchTO, @PathVariable Integer id) {
+        log.info("update {} ", merchTO);
+        Merch merch = service.get(id);
+        service.update(MerchUtil.updateFromTo(merch, merchTO));
     }
 
     @GetMapping("/{id}")
-    public MerchTO get(@PathVariable Integer id) {
+    public MerchResponseTO get(@PathVariable Integer id) {
         log.info("get merch {}", id);
         return  MerchUtil.createTo(service.get(id));
     }
 
     @GetMapping
-    public List<MerchTO> getAll() {
+    public List<MerchResponseTO> getAll() {
         log.info("get all merch");
         return MerchUtil.getTos(service.getAll());
     }

@@ -10,19 +10,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.service.UserService;
-import ru.semkonei.ordersvc.to.UserTO;
+import ru.semkonei.ordersvc.util.SecurityUtil;
+import ru.semkonei.ordersvc.web.to.UserRequestTO;
+import ru.semkonei.ordersvc.web.to.UserResponseTO;
 import ru.semkonei.ordersvc.util.toUtils.UserUtil;
 
 import java.net.URI;
 import java.util.List;
 
-import static ru.semkonei.ordersvc.util.ValidationUtil.assureIdConsistent;
-
 @RestController
 @RequestMapping(value = UserRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserRestController {
 
-    static final String REST_URL = "rest/user";
+    static final String REST_URL = "/rest/user/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -34,7 +34,7 @@ public class UserRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserTO> create(@RequestBody UserTO userTO) {
+    public ResponseEntity<UserResponseTO> create(@RequestBody UserRequestTO userTO) {
         log.info("create {}", userTO);
         User created = service.create(UserUtil.getFromTo(userTO));
 
@@ -47,20 +47,23 @@ public class UserRestController {
 
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody UserTO userTO, @PathVariable Integer id) {
-        log.info("update {} ", userTO);
-        assureIdConsistent(userTO, id);
-        service.update(UserUtil.getFromTo(userTO));
+    public ResponseEntity<UserResponseTO> update(@RequestBody UserRequestTO userTO, @PathVariable Integer id) {
+        log.info("update {} with id={}", userTO, id);
+        if (!SecurityUtil.authUserId().equals(id))
+            return ResponseEntity.badRequest().build();
+        User user = service.get(id);
+        user = service.update(UserUtil.updateFromTo(user, userTO));
+        return ResponseEntity.ok(UserUtil.createTo(user));
     }
 
     @GetMapping("/{id}")
-    public UserTO get(@PathVariable Integer id) {
+    public UserResponseTO get(@PathVariable Integer id) {
         log.info("get user {}", id);
         return  UserUtil.createTo(service.get(id));
     }
 
     @GetMapping
-    public List<UserTO> getAll() {
+    public List<UserResponseTO> getAll() {
         log.info("get all users");
         return UserUtil.getTos(service.getAll());
     }
