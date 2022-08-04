@@ -17,6 +17,7 @@
         <!-- Spring -->
         <spring-data-jpa.version>2.7.0</spring-data-jpa.version>
         <spring.version>5.3.20</spring.version>
+        <spring-security.version>5.7.2</spring-security.version>
 
         <!-- Database -->
         <h2.version>2.1.212</h2.version>
@@ -68,6 +69,19 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
             <version>${spring-data-jpa.version}</version>
+        </dependency>
+
+        <!-- security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+            <version>${spring-security.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
 
         <!-- Web -->
@@ -149,6 +163,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <version>${spring-security.version}</version>
         </dependency>
 
         <!-- Utils -->
