@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,15 +14,14 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-@Entity
-@Table(name = "users")
+import static org.hibernate.validator.internal.util.CollectionHelper.asSet;
+
 @Getter
 @Setter
+@Entity
+@Table(name = "users")
 @NoArgsConstructor
 public class User extends NamedEntity {
 
@@ -37,11 +37,21 @@ public class User extends NamedEntity {
     private String password;
 
     @Column(name = "enabled", nullable = false)
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     @NotNull
     @Column(name = "registered", nullable = false, updatable = false)
     private Date registered = new Date();
+
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+            uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "role"}, name = "uk_user_roles")})
+    @Column(name = "role")
+    @ElementCollection(fetch = FetchType.EAGER)
+    @BatchSize(size = 200)
+    @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    private Set<Role> roles;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     @OnDelete(action = OnDeleteAction.CASCADE)
@@ -50,28 +60,21 @@ public class User extends NamedEntity {
     private List<Order> orders = new ArrayList<>();
 
     public User(User u) {
-        this(u.id, u.name, u.email, u.password, u.enabled, u.registered);
+        this(u.id, u.name, u.email, u.password, u.enabled, u.registered, u.roles);
     }
 
-    public User(Integer id, String name) {
-        super(id, name);
+    public User(Integer id, String name, String email, String password, Role... roles) {
+        this(id, name, email, password, true, new Date(), asSet((roles)));
     }
 
-    public User(String name, String email, String password) {
-        this(null, name, email, password, false, new Date());
-    }
-    public User(Integer id, String name, String email, String password) {
-        this(id, name, email, password, false, new Date());
-    }
-
-    public User(Integer id, String name, String email, String password, boolean enabled, Date registered) {
+    public User(Integer id, String name, String email, String password, boolean enabled, Date registered, Set<Role> roles) {
         super(id, name);
         this.email = email;
         this.password = password;
         this.enabled = enabled;
         this.registered = registered;
+        setRoles(roles);
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
