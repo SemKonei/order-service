@@ -9,6 +9,11 @@ VALUES ('User', 'user@yandex.ru', 'password'),
        ('Admin', 'admin@gmail.com', 'admin'),
        ('Guest', 'guest@gmail.com', 'guest');
 
+INSERT INTO user_roles (role, user_id)
+VALUES ('USER', 100000),
+       ('ADMIN', 100001),
+       ('USER', 100001);
+
 INSERT INTO merch (name, curr_price)
 VALUES ('Merch 1', 100),
        ('Merch 2', 500);

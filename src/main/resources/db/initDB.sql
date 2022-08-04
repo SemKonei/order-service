@@ -13,7 +13,16 @@ CREATE TABLE users
     email      VARCHAR                 NOT NULL,
     password   VARCHAR                 NOT NULL,
     registered TIMESTAMP DEFAULT now() NOT NULL,
-    enabled    BOOLEAN      DEFAULT TRUE  NOT NULL
+    enabled    BOOLEAN   DEFAULT TRUE  NOT NULL
+);
+CREATE UNIQUE INDEX users_unique_email_idx ON users (email);
+
+CREATE TABLE user_roles
+(
+    user_id INTEGER NOT NULL,
+    role    VARCHAR NOT NULL,
+    CONSTRAINT user_roles_idx UNIQUE (user_id, role),
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
 CREATE TABLE merch
@@ -26,8 +35,8 @@ CREATE TABLE merch
 CREATE TABLE orders
 (
     id        BIGINT    DEFAULT NEXT VALUE FOR global_seq PRIMARY KEY,
-    user_id   INTEGER                 NOT NULL,
-    date_time TIMESTAMP DEFAULT now() NOT NULL,
+    user_id   INTEGER                   NOT NULL,
+    date_time TIMESTAMP DEFAULT now()   NOT NULL,
     status    VARCHAR   DEFAULT 'DRAFT' NOT NULL,
     /*price    FLOAT   NOT NULL,*/
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
