@@ -15,8 +15,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.semkonei.ordersvc.TestUtil.userHttpBasic;
 import static ru.semkonei.ordersvc.testdata.OrderTestData.*;
 import static ru.semkonei.ordersvc.testdata.UserTestData.USER_ID;
+import static ru.semkonei.ordersvc.testdata.UserTestData.user;
 import static ru.semkonei.ordersvc.web.OrderRestController.REST_URL;
 
 class OrderRestControllerTest extends AbstractControllerTest {
@@ -26,7 +28,8 @@ class OrderRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getOrder() throws Exception {
-        perform(get(REST_URL + ORDER1_ID).contentType(MediaType.APPLICATION_JSON))
+        perform(get(REST_URL + ORDER1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -35,7 +38,8 @@ class OrderRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(get(REST_URL).contentType(MediaType.APPLICATION_JSON))
+        perform(get(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -46,14 +50,16 @@ class OrderRestControllerTest extends AbstractControllerTest {
     void updateStatus() throws Exception {
         Order updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + ORDER1_ID + "?status=" + OrderStatus.COMPLETED)
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isNoContent());
         ORDER_MATCHER.assertMatch(orderService.get(ORDER1_ID, USER_ID), updated);
     }
 
     @Test
     void deleteOrder() throws Exception {
-        perform(delete(REST_URL + ORDER1_ID).contentType(MediaType.APPLICATION_JSON))
+        perform(delete(REST_URL + ORDER1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(user)))
                 .andExpect(status().isNoContent());
         Assertions.assertThrows(NotFoundException.class, () -> orderService.get(ORDER1_ID, USER_ID));
     }

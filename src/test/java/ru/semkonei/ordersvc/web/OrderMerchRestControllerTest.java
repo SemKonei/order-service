@@ -20,79 +20,86 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.semkonei.ordersvc.TestUtil.userHttpBasic;
 import static ru.semkonei.ordersvc.testdata.OrderMerchTestData.getNew;
 import static ru.semkonei.ordersvc.testdata.OrderMerchTestData.*;
 import static ru.semkonei.ordersvc.testdata.OrderTestData.ORDER1_ID;
+import static ru.semkonei.ordersvc.testdata.UserTestData.*;
 import static ru.semkonei.ordersvc.web.OrderMerchRestController.REST_URL;
 
 class OrderMerchRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private OrderMerchService orderMerchService;
-    @Autowired
-    private OrderDataService orderDataService;
 
     @Test
-    void save() throws Exception {
+    void saveNew() throws Exception {
         OrderMerch newMerch = getNew();
         OrderMerchRequestTOTEst orderMerchRequestTO = new OrderMerchRequestTOTEst(newMerch);
-        ResultActions action = perform(
-                post(REST_URL +
-                        "?merchId=" + newMerch.getId() +
-                        "&count=" + getNew().getCount())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(orderMerchRequestTO)))
-                .andDo(print());
-        OrderMerchResponseTO OMto = ORDERMERCHTO_MATCHER.readFromJson(action);
+        OrderMerchResponseTO OMto = getOrderMerchResponseTO(orderMerchRequestTO);
         OrderMerch created = new OrderMerch(OMto.getId(), new Order(OMto.getOrderId()), new Merch(OMto.getMerchId()),
                 OMto.getPrice(), OMto.getCount());
         int newId = created.id();
         newMerch.setId(newId);
         ORDERMERCH_MATCHER.assertMatch(created, newMerch);
-        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), SecurityUtil.authUserId()), newMerch);
+        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), USER_ID), newMerch);
+    }
+    @Test
+    void saveNewWithoutMerch() throws Exception {
+        OrderMerch newOrderMerch = getNew();
+        newOrderMerch.setMerch(null);
+        OrderMerchRequestTOTEst orderMerchRequestTO = new OrderMerchRequestTOTEst(null, newOrderMerch.getOrder().getId(),
+                newOrderMerch.getPrice(), newOrderMerch.getCount());
+        OrderMerchResponseTO OMto = getOrderMerchResponseTO(orderMerchRequestTO);
+        OrderMerch created = new OrderMerch(OMto.getId(), new Order(OMto.getOrderId()), new Merch(OMto.getMerchId()),
+                OMto.getPrice(), OMto.getCount());
+        int newId = created.id();
+        newOrderMerch.setId(newId);
+        ORDERMERCH_MATCHER.assertMatch(created, newOrderMerch);
+        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), USER_ID), newOrderMerch);
+    }
+    @Test
+    void saveNewWithoutOrder() throws Exception {
+        OrderMerch newOrderMerch = getNew();
+        newOrderMerch.setOrder(null);
+        OrderMerchRequestTOTEst orderMerchRequestTO = new OrderMerchRequestTOTEst(newOrderMerch.getMerch().id(), null,
+                newOrderMerch.getPrice(), newOrderMerch.getCount());
+        OrderMerchResponseTO OMto = getOrderMerchResponseTO(orderMerchRequestTO);
+        OrderMerch created = new OrderMerch(OMto.getId(), new Order(OMto.getOrderId()), new Merch(OMto.getMerchId()),
+                OMto.getPrice(), OMto.getCount());
+        int newId = created.id();
+        newOrderMerch.setId(newId);
+        ORDERMERCH_MATCHER.assertMatch(created, newOrderMerch);
+        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), USER_ID), newOrderMerch);
     }
 
     @Test
-    void saveWithOldOrder() throws Exception {
-        OrderMerch newMerch = getNew();
+    void saveWithOrder() throws Exception {
+        OrderMerch newMerch = getNewWithOrder();
         OrderMerchRequestTOTEst orderMerchRequestTO = new OrderMerchRequestTOTEst(newMerch);
-        ResultActions action = perform(
-                post(REST_URL +
-                        "?merchId=" + newMerch.getMerch().getId() +
-                        "&count=" + newMerch.getCount()+
-                        "&orderId=" + newMerch.getOrder().getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(orderMerchRequestTO)))
-                .andDo(print());
-        OrderMerchResponseTO OMto = ORDERMERCHTO_MATCHER.readFromJson(action);
+        OrderMerchResponseTO OMto = getOrderMerchResponseTO(orderMerchRequestTO);
         OrderMerch created = new OrderMerch(OMto.getId(), new Order(OMto.getOrderId()), new Merch(OMto.getMerchId()),
                 OMto.getPrice(), OMto.getCount());
         int newId = created.id();
         newMerch.setId(newId);
         ORDERMERCH_MATCHER.assertMatch(created, newMerch);
-        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), SecurityUtil.authUserId()), newMerch);
+        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), USER_ID), newMerch);
     }
-    @Test
-    void saveWithOldOrder2() throws Exception {
-        OrderMerch newMerch = getNew();
-        OrderMerchRequestTOTEst orderMerchRequestTO = new OrderMerchRequestTOTEst(newMerch);
+
+    private OrderMerchResponseTO getOrderMerchResponseTO(OrderMerchRequestTOTEst orderMerchRequestTO) throws Exception {
         ResultActions action = perform(
                 post(REST_URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(orderMerchRequestTO)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(JsonUtil.writeValue(orderMerchRequestTO))
+                        .with(userHttpBasic(user)))
                 .andDo(print());
-        OrderMerchResponseTO OMto = ORDERMERCHTO_MATCHER.readFromJson(action);
-        OrderMerch created = new OrderMerch(OMto.getId(), new Order(OMto.getOrderId()), new Merch(OMto.getMerchId()),
-                OMto.getPrice(), OMto.getCount());
-        int newId = created.id();
-        newMerch.setId(newId);
-        ORDERMERCH_MATCHER.assertMatch(created, newMerch);
-        ORDERMERCH_MATCHER.assertMatch(orderMerchService.get(newId, created.getOrder().getId(), SecurityUtil.authUserId()), newMerch);
+        return ORDERMERCHTO_MATCHER.readFromJson(action);
     }
 
     @Test
     void getOrderMerch() throws Exception {
-        perform(get(REST_URL + ORDERMERCH1_ID + "?orderId=" + ORDER1_ID))
+        perform(get(REST_URL + ORDERMERCH1_ID + "?orderId=" + ORDER1_ID)
+                .with(userHttpBasic(user)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))

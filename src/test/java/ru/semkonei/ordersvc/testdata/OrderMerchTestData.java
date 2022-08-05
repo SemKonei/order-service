@@ -1,6 +1,7 @@
 package ru.semkonei.ordersvc.testdata;
 
 import ru.semkonei.ordersvc.MatcherFactory;
+import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.model.OrderMerch;
 import ru.semkonei.ordersvc.web.to.OrderMerchResponseTO;
 
@@ -24,8 +25,11 @@ public class OrderMerchTestData {
 
     public static List<OrderMerch> orderMerchList = Arrays.asList(ORDER_DATA_1, ORDER_DATA_2);
 
+    public static OrderMerch getNewWithOrder() {
+        return new OrderMerch(null, order1, merch1, 100f, 1);
+    }
     public static OrderMerch getNew() {
-        return new OrderMerch(null, order2, merch1, 100f, 1);
+        return new OrderMerch(null, new Order(), merch1, 100f, 1);
     }
 
     public static OrderMerch getUpdated() {

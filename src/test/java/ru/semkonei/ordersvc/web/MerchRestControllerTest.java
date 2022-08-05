@@ -10,6 +10,7 @@ import ru.semkonei.ordersvc.service.MerchService;
 import ru.semkonei.ordersvc.util.exception.NotFoundException;
 import ru.semkonei.ordersvc.util.toUtils.MerchUtil;
 import ru.semkonei.ordersvc.web.json.JsonUtil;
+import ru.semkonei.ordersvc.web.to.MerchRequestTO;
 import ru.semkonei.ordersvc.web.to.MerchResponseTO;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -17,7 +18,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static ru.semkonei.ordersvc.TestUtil.userHttpBasic;
 import static ru.semkonei.ordersvc.testdata.MerchTestData.*;
+import static ru.semkonei.ordersvc.testdata.UserTestData.admin;
+import static ru.semkonei.ordersvc.testdata.UserTestData.user;
 import static ru.semkonei.ordersvc.web.MerchRestController.REST_URL;
 
 class MerchRestControllerTest extends AbstractControllerTest {
@@ -30,7 +34,8 @@ class MerchRestControllerTest extends AbstractControllerTest {
         Merch newMerch = getNew();
         ResultActions action = perform(post(REST_URL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(newMerch)));
+                .content(JsonUtil.writeValue(newMerch))
+                .with(userHttpBasic(admin)));
         Merch created = MERCH_MATCHER.readFromJson(action);
         int newId = created.id();
         newMerch.setId(newId);
@@ -39,8 +44,9 @@ class MerchRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getUsers() throws Exception {
-        perform(get(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON))
+    void getMerch() throws Exception {
+        perform(get(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -49,7 +55,8 @@ class MerchRestControllerTest extends AbstractControllerTest {
 
     @Test
     void getAll() throws Exception {
-        perform(get(REST_URL).contentType(MediaType.APPLICATION_JSON))
+        perform(get(REST_URL).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -62,15 +69,17 @@ class MerchRestControllerTest extends AbstractControllerTest {
         MerchResponseTO merchResponseTO = MerchUtil.createTo(updated);
         merchResponseTO.setId(null);
         perform(put(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(merchResponseTO)))
+                .content(JsonUtil.writeValue(merchResponseTO))
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isNoContent());
 
         MERCH_MATCHER.assertMatch(merchService.get(MERCH1_ID), updated);
     }
 
     @Test
-    public void deleteUser() throws Exception {
-        perform(delete(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON))
+    public void deleteMerch() throws Exception {
+        perform(delete(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
+                .with(userHttpBasic(admin)))
                 .andExpect(status().isNoContent());
         Assertions.assertThrows(NotFoundException.class, () -> merchService.get(MERCH1_ID));
     }

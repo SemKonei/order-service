@@ -28,7 +28,7 @@ public class OrderTestData {
     public static final Order order2 = new Order(
             ORDER1_ID+1,
             LocalDateTime.of(2022, 4, 2, 3, 33),
-            OrderStatus.DRAFT,
+            OrderStatus.COMPLETED,
             user);
     public static final Order order3 = new Order(
             ORDER1_ID+2,

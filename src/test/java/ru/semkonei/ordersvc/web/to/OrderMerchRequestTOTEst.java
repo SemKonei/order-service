@@ -9,4 +9,10 @@ public class OrderMerchRequestTOTEst extends OrderMerchRequestTO {
         this.price = orderMerch.getPrice();
         this.count = orderMerch.getCount();
     }
+    public OrderMerchRequestTOTEst(Integer merchId, Integer orderId, Float price, Integer count) {
+        this.merchId = merchId;
+        this.orderId = orderId;
+        this.price = price;
+        this.count = count;
+    }
 }
