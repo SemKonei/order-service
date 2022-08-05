@@ -8,12 +8,16 @@ import ru.semkonei.ordersvc.model.User;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserResponseTO extends NamedTO {
+public class UserResponseTO extends NamedTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Email
     @NotBlank
@@ -36,4 +40,9 @@ public class UserResponseTO extends NamedTO {
         this.registered = user.getRegistered();
     }
 
+    public UserResponseTO(Integer id, String name, String email, String password) {
+        super(id, name);
+        this.email = email;
+        this.password = password;
+    }
 }
