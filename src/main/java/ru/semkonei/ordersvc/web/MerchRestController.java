@@ -21,7 +21,7 @@ import java.util.List;
 @RequestMapping(value = MerchRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MerchRestController {
 
-    static final String REST_URL = "/rest/merch/";
+    static final String REST_URL = "/rest/admin/merch/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
