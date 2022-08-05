@@ -34,7 +34,8 @@ public class DataJpaMerchRepository implements MerchRepository {
     }
 
     @Override
-    public boolean delete(Integer id) {
-        return merchRepository.delete(id) != 0;
+    public Integer delete(Integer id) {
+        Integer result = merchRepository.delete(id);
+        return  result != 0 ? result : null;
     }
 }

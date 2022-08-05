@@ -13,5 +13,5 @@ public interface CrudMerchRepository extends JpaRepository<Merch, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE FROM Merch m WHERE m.id=:id")
-    int delete(@Param("id") int id);
+    Integer delete(@Param("id") int id);
 }

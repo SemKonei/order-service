@@ -11,7 +11,6 @@ public interface OrderMerchRepository {
     OrderMerch get(Integer id, Integer orderId, Integer userId);
 
     List<OrderMerch> getAll(Integer orderId, Integer userId);
-    List<OrderMerch> getAllForAll();
 
-    boolean delete(Integer id, Integer orderId, Integer userId);
+    Integer delete(Integer id, Integer orderId, Integer userId);
 }

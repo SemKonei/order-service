@@ -12,5 +12,5 @@ public interface MerchRepository {
 
     List<Merch> getAll();
 
-    boolean delete(Integer id);
+    Integer delete(Integer id);
 }

@@ -60,7 +60,8 @@ public class DataJpaOrderRepository implements OrderRepository {
     }
 
     @Override
-    public boolean delete(Integer id, Integer userId) {
-        return orderRepository.delete(id, userId) != 0;
+    public Integer delete(Integer id, Integer userId) {
+        Integer result = orderRepository.delete(id, userId);
+        return result != 0 ? result : null;
     }
 }

@@ -43,17 +43,12 @@ public class OrderMerchService {
         return repository.getAll(orderId, userId);
     }
 
- /*   @Transactional
-    public List<OrderMerch> getAllForAll() {
-        return repository.getAllForAll();
-    }*/
-
     public OrderMerch update(OrderMerch orderMerch, Integer userId) {
         Assert.notNull(orderMerch, "OrderMerch must not be null!");
         return checkNotFoundWithId(repository.save(orderMerch, userId), orderMerch.id());
     }
 
-    public boolean delete(Integer id, Integer orderId, Integer userId) {
-        return checkNotFoundWithId(repository.delete(id, orderId, userId), id);
+    public void delete(Integer id, Integer orderId, Integer userId) {
+        checkNotFoundWithId(repository.delete(id, orderId, userId), id);
     }
 }

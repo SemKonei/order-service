@@ -21,7 +21,7 @@ public interface CrudOrderMerchRepository extends JpaRepository<OrderMerch, Inte
                     " (SELECT o.id FROM orders o" +
                     " WHERE o.user_id=:userId)",
             nativeQuery = true)
-    int delete(@Param("id") int id, @Param("orderId") int orderId, @Param("userId") int userId);
+    Integer delete(@Param("id") int id, @Param("orderId") int orderId, @Param("userId") int userId);
 
     @Query("SELECT o FROM OrderMerch o  WHERE o.order.id=:orderId AND o.order.user.id=:userId")
     List<OrderMerch> getAll(@Param("orderId") int orderId, @Param("userId") int userId);

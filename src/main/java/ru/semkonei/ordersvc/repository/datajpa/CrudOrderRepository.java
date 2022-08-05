@@ -17,7 +17,7 @@ public interface CrudOrderRepository extends JpaRepository<Order, Integer> {
     @Transactional
     @Modifying
     @Query("DELETE FROM Order o WHERE o.id=:id AND o.user.id=:userId")
-    int delete(@Param("id") int id, @Param("userId") int userId);
+    Integer delete(@Param("id") int id, @Param("userId") int userId);
 
     @Transactional
     @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.id=:id AND o.status<>:status")

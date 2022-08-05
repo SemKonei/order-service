@@ -38,17 +38,13 @@ public class DataJpaOrderMerchRepository implements OrderMerchRepository {
     }
 
     @Override
-    public List<OrderMerch> getAllForAll() {
-        return orderMerchRepository.findAll();
-    }
-
-    @Override
     public List<OrderMerch> getAll(Integer orderId, Integer userId) {
         return orderMerchRepository.getAll(orderId, userId);
     }
 
     @Override
-    public boolean delete(Integer id, Integer orderId, Integer userId) {
-        return orderMerchRepository.delete(id, orderId, userId) != 0;
+    public Integer delete(Integer id, Integer orderId, Integer userId) {
+        Integer result = orderMerchRepository.delete(id, orderId, userId);
+        return result != 0 ? result : null;
     }
 }

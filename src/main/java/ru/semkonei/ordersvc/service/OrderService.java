@@ -6,11 +6,9 @@ import org.springframework.util.Assert;
 import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.model.OrderStatus;
 import ru.semkonei.ordersvc.repository.OrderRepository;
-import ru.semkonei.ordersvc.util.SecurityUtil;
 
 import java.util.List;
 
-import static ru.semkonei.ordersvc.util.ValidationUtil.checkNew;
 import static ru.semkonei.ordersvc.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -25,7 +23,6 @@ public class OrderService {
 
     public Order create(Order order, Integer userId) {
         Assert.notNull(order, "Order must not be null!");
-        checkNew(order);
         return repository.save(order, userId);
     }
 
@@ -54,7 +51,7 @@ public class OrderService {
         return checkNotFoundWithId(repository.save(order, userId), order.id());
     }
 
-    public boolean delete(Integer id, Integer userId) {
-        return checkNotFoundWithId(repository.delete(id, userId), id);
+    public void delete(Integer id, Integer userId) {
+        checkNotFoundWithId(repository.delete(id, userId), id);
     }
 }

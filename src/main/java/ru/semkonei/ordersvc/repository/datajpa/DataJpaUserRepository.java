@@ -11,6 +11,7 @@ import java.util.List;
 public class DataJpaUserRepository implements UserRepository {
 
     private final Sort SORTED_NAME_EMAIL = Sort.by(Sort.Direction.ASC,"name", "email");
+    private final Sort SORTED_ID = Sort.by(Sort.Direction.ASC,"id");
 
     private CrudUserRepository userRepository;
 
@@ -35,11 +36,12 @@ public class DataJpaUserRepository implements UserRepository {
 
     @Override
     public List<User> getAll() {
-        return userRepository.findAll(SORTED_NAME_EMAIL);
+        return userRepository.findAll(SORTED_ID);
     }
 
     @Override
-    public boolean delete(Integer id) {
-        return userRepository.delete(id) != 0;
+    public Integer delete(Integer id) {
+        Integer result = userRepository.delete(id);
+        return result != 0 ? result : null;
     }
 }

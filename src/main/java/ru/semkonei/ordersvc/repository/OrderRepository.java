@@ -19,5 +19,5 @@ public interface OrderRepository {
 
     List<Order> getAll(Integer userId);
 
-    boolean delete(Integer id, Integer userId);
+    Integer delete(Integer id, Integer userId);
 }

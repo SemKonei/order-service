@@ -8,7 +8,6 @@ import ru.semkonei.ordersvc.repository.MerchRepository;
 
 import java.util.List;
 
-import static ru.semkonei.ordersvc.util.ValidationUtil.checkNew;
 import static ru.semkonei.ordersvc.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -23,7 +22,6 @@ public class MerchService {
 
     public Merch create(Merch merch) {
         Assert.notNull(merch, "Merch must not be null!");
-        checkNew(merch);
         return repository.save(merch);
     }
 
@@ -40,7 +38,7 @@ public class MerchService {
         return checkNotFoundWithId(repository.save(merch), merch.id());
     }
 
-    public boolean delete(int id) {
-        return checkNotFoundWithId(repository.delete(id), id);
+    public void delete(int id) {
+        checkNotFoundWithId(repository.delete(id), id);
     }
 }
