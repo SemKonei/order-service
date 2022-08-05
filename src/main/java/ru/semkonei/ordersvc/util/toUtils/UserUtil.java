@@ -22,6 +22,9 @@ public class UserUtil {
                 userTO.getEmail().toLowerCase(),
                 userTO.getPassword());
     }
+    public static UserResponseTO asTo(User user) {
+        return new UserResponseTO(user.getId(), user.getName(), user.getEmail(), user.getPassword());
+    }
 
     public static User updateFromTo(User user, UserRequestTO userTo) {
         user.setName(userTo.getName());
