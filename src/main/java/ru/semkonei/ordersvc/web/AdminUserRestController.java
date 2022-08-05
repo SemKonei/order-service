@@ -10,25 +10,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.service.UserService;
-import ru.semkonei.ordersvc.util.SecurityUtil;
+import ru.semkonei.ordersvc.util.toUtils.UserUtil;
 import ru.semkonei.ordersvc.web.to.UserRequestTO;
 import ru.semkonei.ordersvc.web.to.UserResponseTO;
-import ru.semkonei.ordersvc.util.toUtils.UserUtil;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
-@RequestMapping(value = UserRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserRestController {
+@RequestMapping(value = AdminUserRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
+public class AdminUserRestController {
 
-    static final String REST_URL = "/rest/user/";
+    static final String REST_URL = "/rest/admin/user/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final UserService service;
 
     @Autowired
-    public UserRestController(UserService service) {
+    public AdminUserRestController(UserService service) {
         this.service = service;
     }
 
@@ -44,29 +44,30 @@ public class UserRestController {
         return ResponseEntity.created(uriOfNewResource).body(UserUtil.createTo(created));
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{userId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public ResponseEntity<UserResponseTO> update(@RequestBody UserRequestTO userTO) {
-        int userId = SecurityUtil.authUserId();
+    public ResponseEntity<UserResponseTO> update(@RequestBody UserRequestTO userTO, @PathVariable Integer userId) {
         log.info("update {} with id={}", userTO, userId);
-        if (!(SecurityUtil.authUserId() == userId))
-            return ResponseEntity.badRequest().build();
         User user = service.get(userId);
         user = service.update(UserUtil.updateFromTo(user, userTO));
         return ResponseEntity.ok(UserUtil.createTo(user));
     }
 
-    @GetMapping()
-    public UserResponseTO get() {
-        int userId = SecurityUtil.authUserId();
+    @GetMapping("/{userId}")
+    public UserResponseTO get(@PathVariable Integer userId) {
         log.info("get user {}", userId);
         return  UserUtil.createTo(service.get(userId));
     }
 
-    @DeleteMapping()
+    @GetMapping
+    public List<UserResponseTO> getAll() {
+        log.info("get all users");
+        return UserUtil.getTos(service.getAll());
+    }
+
+    @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete() {
-        int userId = SecurityUtil.authUserId();
+    public void delete(@PathVariable Integer userId) {
         log.info("delete user {}", userId);
         service.delete(userId);
     }
