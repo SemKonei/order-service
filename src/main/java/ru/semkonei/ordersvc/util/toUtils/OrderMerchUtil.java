@@ -19,6 +19,11 @@ public class OrderMerchUtil {
         orderMerch.setPrice(orderMerchTO.getPrice());
         return orderMerch;
     }
+    public static OrderMerch updateFromTo(OrderMerch orderMerch, OrderMerchResponseTO orderMerchTO) {
+        orderMerch.setCount(orderMerchTO.getCount());
+        orderMerch.setPrice(orderMerchTO.getPrice());
+        return orderMerch;
+    }
 
     public static OrderMerch getFromTo(OrderMerchRequestTO orderMerchTO) {
         return new OrderMerch(null, null, null, orderMerchTO.getPrice(), orderMerchTO.getCount());

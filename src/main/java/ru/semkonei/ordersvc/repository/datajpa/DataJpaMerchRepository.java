@@ -2,6 +2,7 @@ package ru.semkonei.ordersvc.repository.datajpa;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.Merch;
 import ru.semkonei.ordersvc.repository.MerchRepository;
 
@@ -19,6 +20,7 @@ public class DataJpaMerchRepository implements MerchRepository {
     }
 
     @Override
+    @Transactional
     public Merch save(Merch merch) {
         return merchRepository.save(merch);
     }
@@ -29,11 +31,17 @@ public class DataJpaMerchRepository implements MerchRepository {
     }
 
     @Override
+    public List<Merch> getAllById(List<Integer> idList) {
+        return merchRepository.findAllById(idList);
+    }
+
+    @Override
     public List<Merch> getAll() {
         return merchRepository.findAll(SORTED_NAME);
     }
 
     @Override
+    @Transactional
     public Integer delete(Integer id) {
         Integer result = merchRepository.delete(id);
         return  result != 0 ? result : null;

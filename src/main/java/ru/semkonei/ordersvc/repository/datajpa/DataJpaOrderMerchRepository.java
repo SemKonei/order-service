@@ -2,6 +2,7 @@ package ru.semkonei.ordersvc.repository.datajpa;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.OrderMerch;
 import ru.semkonei.ordersvc.repository.OrderMerchRepository;
 
@@ -23,8 +24,15 @@ public class DataJpaOrderMerchRepository implements OrderMerchRepository {
     }
 
     @Override
+    @Transactional
     public OrderMerch save(OrderMerch orderMerch, Integer userId) {
         return orderMerchRepository.save(orderMerch);
+    }
+
+    @Override
+    @Transactional
+    public List<OrderMerch> saveAll(List<OrderMerch> orderMerchList, Integer userId) {
+        return orderMerchRepository.saveAll(orderMerchList);
     }
 
     @Override
@@ -43,6 +51,7 @@ public class DataJpaOrderMerchRepository implements OrderMerchRepository {
     }
 
     @Override
+    @Transactional
     public Integer delete(Integer id, Integer orderId, Integer userId) {
         Integer result = orderMerchRepository.delete(id, orderId, userId);
         return result != 0 ? result : null;

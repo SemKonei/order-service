@@ -24,29 +24,23 @@ import java.util.List;
 @RequestMapping(value = OrderMerchRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderMerchRestController {
 
-    static final String REST_URL = OrderRestController.REST_URL + "details/";
+    static final String REST_URL = OrderRestController.REST_URL + "items/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final OrderDataService orderDataService;
     private final OrderMerchService orderMerchService;
-    private final MerchService merchService;
 
     @Autowired
-    public OrderMerchRestController(OrderDataService orderDataService, OrderMerchService orderMerchService, MerchService merchService) {
+    public OrderMerchRestController(OrderDataService orderDataService, OrderMerchService orderMerchService) {
         this.orderDataService = orderDataService;
         this.orderMerchService = orderMerchService;
-        this.merchService = merchService;
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OrderMerchResponseTO> save(@RequestBody OrderMerchRequestTO orderMerchTO) {
         log.info("add OrderMerch {} to Order {}", orderMerchTO.getMerchId(), orderMerchTO.getOrderId());
-        OrderMerch orderMerch = orderDataService.create(
-                orderMerchTO.getMerchId(),
-                orderMerchTO.getCount(),
-                orderMerchTO.getOrderId(),
-                SecurityUtil.authUserId());
+        OrderMerch orderMerch = orderDataService.saveToNewOrder(orderMerchTO, SecurityUtil.authUserId());
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -55,32 +49,47 @@ public class OrderMerchRestController {
         return ResponseEntity.created(uriOfNewResource).body(OrderMerchUtil.createTo(orderMerch));
     }
 
+    @PostMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<OrderMerchResponseTO>> saveList(@RequestBody List<OrderMerchRequestTO> orderMerchTO) {
+        log.info("add OrderItems to new Order");
+        List<OrderMerch> orderMerchList = orderDataService.saveAllToNewOrder(orderMerchTO, SecurityUtil.authUserId());
+
+        URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path(REST_URL)
+                .buildAndExpand(orderMerchList.get(0).getId()).toUri();
+
+        return ResponseEntity.created(uriOfNewResource).body(OrderMerchUtil.getTos(orderMerchList));
+    }
+
     @PutMapping(value = "/{orderMerchId}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void updateOrderMerch(@RequestBody OrderMerchRequestTO orderMerchTO, @PathVariable Integer orderMerchId) {
+    public OrderMerchResponseTO update(@RequestBody OrderMerchRequestTO orderMerchTO, @PathVariable Integer orderMerchId) {
         log.info("update OrderMerch {} for Order {}", orderMerchId, orderMerchTO.getOrderId());
-        OrderMerch orderMerch = orderMerchService.get(orderMerchId, orderMerchTO.getOrderId(), SecurityUtil.authUserId());
-        orderMerchService.update(
-                OrderMerchUtil.updateFromTo(orderMerch, orderMerchTO),
-                SecurityUtil.authUserId());
+        return OrderMerchUtil.createTo(orderDataService.updateOrderItem(orderMerchTO, orderMerchId, SecurityUtil.authUserId()));
+    }
+
+    @PutMapping(value = "/list", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<OrderMerchResponseTO> updateList(@RequestBody  List<OrderMerchResponseTO> orderMerchTO, @RequestParam Integer orderId) {
+        log.info("update OrderItems for Order {}",  orderId);
+        return OrderMerchUtil.getTos(orderDataService.updateOrderItemList(orderMerchTO, orderId, SecurityUtil.authUserId()));
     }
 
     @GetMapping("/{orderMerchId}")
-    public OrderMerchResponseTO getOrderMerch(@PathVariable Integer orderMerchId, @RequestParam Integer orderId) {
+    public OrderMerchResponseTO get(@PathVariable Integer orderMerchId, @RequestParam Integer orderId) {
         log.info("get OrderMerch {} from Order {}", orderMerchId, orderId);
         return OrderMerchUtil.createTo(orderMerchService.get(orderMerchId, orderId, SecurityUtil.authUserId()));
     }
 
     @GetMapping()
-    public List<OrderMerchResponseTO> getOrderMerch(@RequestParam Integer orderId) {
+    public List<OrderMerchResponseTO> getAll(@RequestParam Integer orderId) {
         log.info("get items from Order {}", orderId);
         return OrderMerchUtil.getTos(orderMerchService.getAll(orderId, SecurityUtil.authUserId()));
     }
 
     @DeleteMapping("/{orderMerchId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteOM(@PathVariable Integer orderMerchId, @RequestParam Integer orderId) {
+    public void delete(@PathVariable Integer orderMerchId, @RequestParam Integer orderId) {
         log.info("delete OrderMerch from Order {}", orderMerchId);
-        orderMerchService.delete(orderMerchId, orderId, SecurityUtil.authUserId());
+        orderDataService.deleteOrderItem(orderMerchId, orderId, SecurityUtil.authUserId());
     }
 
 }
