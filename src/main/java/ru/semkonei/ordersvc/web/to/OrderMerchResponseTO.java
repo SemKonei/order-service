@@ -10,13 +10,13 @@ import ru.semkonei.ordersvc.model.OrderMerch;
 @NoArgsConstructor
 public class OrderMerchResponseTO extends BaseTO {
 
-    private Integer merchId;
+    protected Integer merchId;
 
-    private Integer orderId;
+    protected Integer orderId;
 
-    private Float price;
+    protected Float price;
 
-    private int count;
+    protected int count;
 
     public OrderMerchResponseTO(OrderMerch orderMerch) {
         super(orderMerch.getId());

@@ -21,7 +21,7 @@ import java.net.URI;
 @RequestMapping(value = UserRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UserRestController {
 
-    static final String REST_URL = "/rest/user/";
+    static final String REST_URL = "/rest/users/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
@@ -35,7 +35,7 @@ public class UserRestController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserResponseTO> create(@RequestBody UserRequestTO userTO) {
         log.info("create {}", userTO);
-        User created = service.create(UserUtil.getFromTo(userTO));
+        User created = service.create(UserUtil.createNewFromTo(userTO));
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -49,11 +49,8 @@ public class UserRestController {
     public ResponseEntity<UserResponseTO> update(@RequestBody UserRequestTO userTO) {
         int userId = SecurityUtil.authUserId();
         log.info("update {} with id={}", userTO, userId);
-        if (!(SecurityUtil.authUserId() == userId))
-            return ResponseEntity.badRequest().build();
-        User user = service.get(userId);
-        user = service.update(UserUtil.updateFromTo(user, userTO));
-        return ResponseEntity.ok(UserUtil.createTo(user));
+        User user = UserUtil.updateFromTo(service.get(userId), userTO);
+        return ResponseEntity.ok(UserUtil.createTo(service.update(user)));
     }
 
     @GetMapping()

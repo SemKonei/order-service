@@ -16,7 +16,7 @@ import static ru.semkonei.ordersvc.util.ValidationUtil.*;
 @Service
 public class UserService  implements UserDetailsService {
 
-    UserRepository repository;
+    private final UserRepository repository;
 
     @Autowired
     public UserService(UserRepository repository) {

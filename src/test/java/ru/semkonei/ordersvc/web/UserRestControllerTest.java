@@ -1,18 +1,13 @@
 package ru.semkonei.ordersvc.web;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.ResultActions;
 import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.service.UserService;
-import ru.semkonei.ordersvc.testdata.UserTestData;
-import ru.semkonei.ordersvc.util.exception.NotFoundException;
 import ru.semkonei.ordersvc.web.json.JsonUtil;
 import ru.semkonei.ordersvc.web.to.UserRequestTOTest;
-
-import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -31,7 +26,6 @@ class UserRestControllerTest extends AbstractControllerTest {
         User newUser = getNew();
         UserRequestTOTest userResponseTO = new UserRequestTOTest(newUser);
         ResultActions action = perform(post(REST_URL)
-                .with(userHttpBasic(user))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(userResponseTO)));
         User created = USER_MATCHER.readFromJson(action);

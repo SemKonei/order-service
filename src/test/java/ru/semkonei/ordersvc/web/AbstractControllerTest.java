@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,8 +27,6 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @ExtendWith(SpringExtension.class)
 @Transactional
 public class AbstractControllerTest {
-
-
 
     private MockMvc mockMvc;
 

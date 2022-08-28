@@ -1,14 +1,13 @@
 package ru.semkonei.ordersvc.service;
 
+import org.junit.jupiter.api.Test;
 import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.util.exception.NotFoundException;
-import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.semkonei.ordersvc.testdata.OrderTestData.*;
 import static ru.semkonei.ordersvc.testdata.UserTestData.USER_ID;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
 
 public class OrderServiceTest extends AbstractServiceTest {
 
@@ -63,7 +62,7 @@ public class OrderServiceTest extends AbstractServiceTest {
 
     @Test
     public void deleteNotFound() {
-        assertThat(service.delete(NOT_FOUND, USER_ID)).isEqualTo(false);
+        assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND, USER_ID));
     }
 }
 

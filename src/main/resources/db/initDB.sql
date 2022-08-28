@@ -10,7 +10,7 @@ CREATE TABLE users
 (
     id         BIGINT    DEFAULT NEXT VALUE FOR global_seq PRIMARY KEY,
     name       VARCHAR                 NOT NULL,
-    email      VARCHAR                 NOT NULL,
+    email      VARCHAR UNIQUE          NOT NULL,
     password   VARCHAR                 NOT NULL,
     registered TIMESTAMP DEFAULT now() NOT NULL,
     enabled    BOOLEAN   DEFAULT TRUE  NOT NULL
