@@ -1,8 +1,12 @@
 package ru.semkonei.ordersvc.util;
 
-import ru.semkonei.ordersvc.model.BaseEntity;
-import ru.semkonei.ordersvc.model.HasId;
+import org.springframework.core.NestedExceptionUtils;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
+import org.springframework.validation.BindingResult;
 import ru.semkonei.ordersvc.util.exception.NotFoundException;
+
+import java.util.stream.Collectors;
 
 public class ValidationUtil {
 
@@ -26,17 +30,17 @@ public class ValidationUtil {
         }
     }
 
-    public static void checkNew(BaseEntity entity) {
-        if (!entity.isNew()) {
-            throw new IllegalArgumentException(entity + " must be new (id=null)!");
-        }
+    @NonNull
+    public static Throwable getRootCause(@NonNull Throwable t) {
+        Throwable rootCause = NestedExceptionUtils.getRootCause(t);
+        return rootCause != null ? rootCause : t;
     }
 
-    public static void assureIdConsistent(HasId entity, int id) {
-        if (entity.isNew()) {
-            entity.setId(id);
-        } else if (entity.id() != id) {
-            throw new IllegalArgumentException(entity + " must be with id=" + id);
-        }
+    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+        return ResponseEntity.unprocessableEntity().body(
+                result.getFieldErrors().stream()
+                        .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                        .collect(Collectors.joining("<br>"))
+        );
     }
 }
