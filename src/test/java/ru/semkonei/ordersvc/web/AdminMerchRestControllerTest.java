@@ -10,21 +10,16 @@ import ru.semkonei.ordersvc.service.MerchService;
 import ru.semkonei.ordersvc.util.exception.NotFoundException;
 import ru.semkonei.ordersvc.util.toUtils.MerchUtil;
 import ru.semkonei.ordersvc.web.json.JsonUtil;
-import ru.semkonei.ordersvc.web.to.MerchRequestTO;
 import ru.semkonei.ordersvc.web.to.MerchResponseTO;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.semkonei.ordersvc.TestUtil.userHttpBasic;
 import static ru.semkonei.ordersvc.testdata.MerchTestData.*;
 import static ru.semkonei.ordersvc.testdata.UserTestData.admin;
-import static ru.semkonei.ordersvc.testdata.UserTestData.user;
-import static ru.semkonei.ordersvc.web.MerchRestController.REST_URL;
+import static ru.semkonei.ordersvc.web.AdminMerchRestController.REST_URL;
 
-class MerchRestControllerTest extends AbstractControllerTest {
+class AdminMerchRestControllerTest extends AbstractControllerTest {
 
     @Autowired
     private MerchService merchService;
@@ -44,36 +39,20 @@ class MerchRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void getMerch() throws Exception {
-        perform(get(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MERCH_MATCHER.contentJson(merch1));
-    }
-
-    @Test
-    void getAll() throws Exception {
-        perform(get(REST_URL).contentType(MediaType.APPLICATION_JSON)
-                .with(userHttpBasic(admin)))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(MERCH_MATCHER.contentJson(merchList));
-    }
-
-    @Test
     void update() throws Exception {
-        Merch updated = getUpdated();
-        MerchResponseTO merchResponseTO = MerchUtil.createTo(updated);
+        Merch updatedMerch = getUpdated();
+        MerchResponseTO merchResponseTO = MerchUtil.createTo(updatedMerch);
         merchResponseTO.setId(null);
-        perform(put(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
+        ResultActions action = perform(put(REST_URL + MERCH1_ID).contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(merchResponseTO))
                 .with(userHttpBasic(admin)))
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
 
-        MERCH_MATCHER.assertMatch(merchService.get(MERCH1_ID), updated);
+        Merch updated = MERCH_MATCHER.readFromJson(action);
+        int newId = updated.id();
+        updatedMerch.setId(newId);
+        MERCH_MATCHER.assertMatch(updated, updatedMerch);
+        MERCH_MATCHER.assertMatch(merchService.get(newId), updatedMerch);
     }
 
     @Test
