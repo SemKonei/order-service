@@ -1,18 +1,20 @@
 package ru.semkonei.ordersvc.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.UUID;
 
-@MappedSuperclass
-@Access(AccessType.FIELD)
+import static java.util.Objects.hash;
+
 @Getter
 @Setter
-@NoArgsConstructor
-public class BaseEntity implements HasId {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@MappedSuperclass
+@Access(AccessType.FIELD)
+public abstract class BaseEntity implements HasId {
 
     public static final int START_SEQ = 100000;
 
@@ -20,10 +22,6 @@ public class BaseEntity implements HasId {
     @SequenceGenerator(name = "global_seq", sequenceName = "global_seq", allocationSize = 1, initialValue = START_SEQ)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "global_seq")
     protected Integer id;
-
-    public BaseEntity(Integer id) {
-        this.id = id;
-    }
 
     @Override
     public String toString() {

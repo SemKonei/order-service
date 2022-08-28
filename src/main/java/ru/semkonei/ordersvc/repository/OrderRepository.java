@@ -11,8 +11,6 @@ public interface OrderRepository {
 
     Order get(Integer id, Integer userId);
 
-    Order getNotWithStatus(Integer id, OrderStatus status, Integer userId);
-
     Order getWithStatus(Integer id, OrderStatus status, Integer userId);
 
     Order getWithOM(Integer orderId, Integer userId);

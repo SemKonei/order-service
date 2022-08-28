@@ -20,10 +20,6 @@ public interface CrudOrderRepository extends JpaRepository<Order, Integer> {
     Integer delete(@Param("id") int id, @Param("userId") int userId);
 
     @Transactional
-    @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.id=:id AND o.status<>:status")
-    Order getNotWithStatus(@Param("id") int id, @Param("status") OrderStatus status, @Param("userId") int userId);
-
-    @Transactional
     @Query("SELECT o FROM Order o WHERE o.user.id=:userId AND o.id=:id AND o.status=:status")
     Order getWithStatus(@Param("id") int id, @Param("status") OrderStatus status, @Param("userId") int userId);
 

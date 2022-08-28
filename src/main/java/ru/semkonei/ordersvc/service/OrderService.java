@@ -2,6 +2,7 @@ package ru.semkonei.ordersvc.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.semkonei.ordersvc.model.Order;
 import ru.semkonei.ordersvc.model.OrderStatus;
@@ -14,13 +15,14 @@ import static ru.semkonei.ordersvc.util.ValidationUtil.checkNotFoundWithId;
 @Service
 public class OrderService {
 
-    OrderRepository repository;
+    private final OrderRepository repository;
 
     @Autowired
     public OrderService(OrderRepository repository) {
         this.repository = repository;
     }
 
+    @Transactional
     public Order create(Order order, Integer userId) {
         Assert.notNull(order, "Order must not be null!");
         return repository.save(order, userId);
@@ -28,10 +30,6 @@ public class OrderService {
 
     public Order get(Integer id, Integer userId) {
         return checkNotFoundWithId(repository.get(id, userId), id);
-    }
-
-    public Order getNotWithStatus(Integer id, OrderStatus status, Integer userId) {
-        return checkNotFoundWithId(repository.getNotWithStatus(id, status, userId), id);
     }
 
     public Order getWithStatus(Integer id, OrderStatus status, Integer userId) {
@@ -46,11 +44,13 @@ public class OrderService {
         return repository.getAll(userId);
     }
 
+    @Transactional
     public Order update(Order order, Integer userId) {
         Assert.notNull(order, "Order must not be null!");
         return checkNotFoundWithId(repository.save(order, userId), order.id());
     }
 
+    @Transactional
     public void delete(Integer id, Integer userId) {
         checkNotFoundWithId(repository.delete(id, userId), id);
     }

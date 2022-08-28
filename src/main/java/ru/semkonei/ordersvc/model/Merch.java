@@ -9,12 +9,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Objects;
 
-@Entity
-@Table(name = "Merch")
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
+@Table(name = "Merch")
 public class Merch extends NamedEntity {
 
     @Column(name = "curr_price", nullable = false)
@@ -50,5 +51,19 @@ public class Merch extends NamedEntity {
         sb.append(", currentPrice=").append(currentPrice)
                 .append("}");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Merch merch = (Merch) o;
+        return currentPrice != null && currentPrice.equals(merch.currentPrice);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), currentPrice);
     }
 }

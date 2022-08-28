@@ -1,12 +1,14 @@
 package ru.semkonei.ordersvc.web.to;
 
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 @Getter
+@ToString
 public class UserRequestTO {
 
     @NotBlank

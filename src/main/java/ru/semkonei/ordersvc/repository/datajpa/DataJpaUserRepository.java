@@ -2,6 +2,7 @@ package ru.semkonei.ordersvc.repository.datajpa;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.semkonei.ordersvc.model.User;
 import ru.semkonei.ordersvc.repository.UserRepository;
 
@@ -13,13 +14,14 @@ public class DataJpaUserRepository implements UserRepository {
     private final Sort SORTED_NAME_EMAIL = Sort.by(Sort.Direction.ASC,"name", "email");
     private final Sort SORTED_ID = Sort.by(Sort.Direction.ASC,"id");
 
-    private CrudUserRepository userRepository;
+    private final CrudUserRepository userRepository;
 
     public DataJpaUserRepository(CrudUserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         return userRepository.save(user);
     }
@@ -40,6 +42,7 @@ public class DataJpaUserRepository implements UserRepository {
     }
 
     @Override
+    @Transactional
     public Integer delete(Integer id) {
         Integer result = userRepository.delete(id);
         return result != 0 ? result : null;

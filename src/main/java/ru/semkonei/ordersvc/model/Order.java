@@ -12,6 +12,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "orders")
@@ -62,11 +63,31 @@ public class Order extends BaseEntity {
         this.status = status;
         this.user = user;
     }
+
+    public boolean isDrafted() {
+        return status.equals(OrderStatus.DRAFT);
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(super.toString());
         sb.append(", orderDate=").append(orderDate);
         sb.append(", status=").append(status).append("}");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Order order = (Order) o;
+        return (orderDate != null && orderDate.equals(order.orderDate))
+                && (status != null && status == order.status);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), orderDate, status);
     }
 }

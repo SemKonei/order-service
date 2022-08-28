@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping(value = OrderRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class OrderRestController {
 
-    static final String REST_URL = "/rest/order/";
+    static final String REST_URL = "/rest/orders/";
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 

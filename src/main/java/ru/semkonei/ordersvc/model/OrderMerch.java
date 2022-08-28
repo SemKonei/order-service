@@ -1,7 +1,6 @@
 package ru.semkonei.ordersvc.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +12,14 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Objects;
 
 @Entity
 @Table(name = "order_merch")
 @Getter
 @Setter
 @NoArgsConstructor
-public class OrderMerch extends BaseEntity{
+public class OrderMerch extends BaseEntity {
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
@@ -42,6 +42,7 @@ public class OrderMerch extends BaseEntity{
     @Positive
     @Column(name = "count", nullable = false)
     private int count;
+
     public OrderMerch(OrderMerch orderMerch) {
         this(orderMerch.id, orderMerch.order, orderMerch.merch, orderMerch.price, orderMerch.count);
     }
@@ -57,10 +58,23 @@ public class OrderMerch extends BaseEntity{
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer(super.toString());
-        /*sb.append(" orderId=").append(order.getId());
-        sb.append(" merchId=").append(merch.getId());*/
         sb.append(" count=").append(count);
         sb.append(" price=").append(price).append("}");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        OrderMerch that = (OrderMerch) o;
+        return count == that.count &&
+                (price != null && price.equals(that.price));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), price, count);
     }
 }

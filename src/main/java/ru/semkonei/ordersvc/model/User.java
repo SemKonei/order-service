@@ -75,6 +75,7 @@ public class User extends NamedEntity {
         this.registered = registered;
         setRoles(roles);
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -86,14 +87,13 @@ public class User extends NamedEntity {
         User that = (User) o;
         return id != null && id.equals(that.id)
                 && enabled == that.enabled
-                && Objects.equals(email, that.email)
-                && Objects.equals(password, that.password)
-                && Objects.equals(registered, that.registered);
+                && (email != null && email.equals(that.email))
+                && (registered != null && registered.equals(that.registered));
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), email, registered);
+        return Objects.hash(super.hashCode(), id, enabled, email, registered);
     }
 
     @Override

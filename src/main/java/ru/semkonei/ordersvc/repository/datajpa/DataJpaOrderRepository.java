@@ -27,7 +27,7 @@ public class DataJpaOrderRepository implements OrderRepository {
         if (!order.isNew() && get(order.id(), userId) == null) {
             return null;
         } else {
-            User user = userRepository.getOne(userId);
+            User user = userRepository.getReferenceById(userId);
             order.setUser(user);
         }
         return orderRepository.save(order);
@@ -44,10 +44,6 @@ public class DataJpaOrderRepository implements OrderRepository {
     public Order getWithStatus(Integer id, OrderStatus status, Integer userId) {
         return orderRepository.getWithStatus(id, status, userId);
     }
-    @Override
-    public Order getNotWithStatus(Integer id, OrderStatus status, Integer userId) {
-        return orderRepository.getNotWithStatus(id, status, userId);
-    }
 
     @Override
     public Order getWithOM(Integer id,Integer userId) {
@@ -60,6 +56,7 @@ public class DataJpaOrderRepository implements OrderRepository {
     }
 
     @Override
+    @Transactional
     public Integer delete(Integer id, Integer userId) {
         Integer result = orderRepository.delete(id, userId);
         return result != 0 ? result : null;
